@@ -3,7 +3,7 @@ report_manager/asgi.py
 main/migrations
 main/backend/Cron
 external
-# static
+static
 .git
 .vs
 .vscode
