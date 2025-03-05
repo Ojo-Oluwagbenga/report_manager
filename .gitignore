@@ -5,6 +5,7 @@ main/backend/Cron
 external
 static
 .git
+.gitignore
 .vs
 .vscode
 oneklassenv
