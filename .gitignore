@@ -6,6 +6,6 @@ external
 static
 .git
 .gitignore
-.vs
+.vs 
 .vscode
 oneklassenv
