@@ -1,0 +1,10 @@
+report_manager/settings.py
+report_manager/asgi.py
+main/migrations
+main/backend/Cron
+external
+# static
+.git
+.vs
+.vscode
+oneklassenv
