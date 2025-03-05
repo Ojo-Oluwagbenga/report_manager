@@ -1,0 +1,159 @@
+STEPS TO DEPLOY ON MY CLOUD
+
+
+CREATE A GIT REPO 
+
+INITIALIZE GIT IN PROJECT
+git init
+
+REMOVE THE SETTINGS FILE FROM THE GITGINORE
+create the .gitignore file and include the settings, and asgi
+git rm -r --cached .  
+
+COMMIT TO THE MAIN
+git add .;git commit -m "General Commit"; git push -u origin main
+
+OPEN THE CLOUD
+
+CREATE PROJECT DB
+sudo -u postgres psql
+CREATE DATABASE project_name;
+CREATE USER project_name_user WITH PASSWORD 'enterpassword';
+ALTER ROLE project_name_user SET client_encoding TO 'utf8';
+ALTER ROLE project_name_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE project_name_user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE project_name TO project_name_user;
+\q #TO EXIT
+
+CREATE THE FOLDER FOR PROJECT project_name
+mkdir projects/project_name
+cd projects/project_name
+git init
+git pull -f origin main
+sudo nano project_name/proj/settings.py and include
+import os
+__all settings data
+CSRF_TRUSTED_ORIGINS = ['secured site']
+ALLOWED_HOSTS = ['SITE']
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+save and exit ctrl x y entr
+
+ACTIVATE THE ENVIRONMENT TO FINISH DB SETTINGS
+cd
+source projects/oneklassenv/bin/ACTIVATE
+cd projects/project_name
+python manage.py makemigrations
+python manage.py migrate
+python manage.py collectstatic
+python manage.py createsuperuser #if you will
+
+
+
+============ SET UP GUNICORN SOCKET AND SERVICE ==============
+
+sudo nano /etc/systemd/system/project_name.socket
+[Unit]
+Description=project_name socket
+
+[Socket]
+ListenStream=/run/project_name.sock
+
+[Install]
+WantedBy=sockets.target
+SAVE AND EXIT
+
+
+======== SET UP THE SERVICE =============
+sudo nano /etc/systemd/system/project_name.service
+
+[Unit]
+Description=project_name daemon
+Requires=project_name.socket
+After=network.target
+
+[Service]
+User=rider
+Group=www-data
+WorkingDirectory=/home/rider/projects/project_name
+ExecStart=/home/rider/projects/oneklassenv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          project_name.asgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+==== START THE SERVICES ========
+sudo systemctl start project_name.socket
+sudo systemctl enable project_name.socket
+sudo systemctl status project_name.socket
+sudo journalctl -u project_name.socket
+sudo systemctl status project_name
+
+sudo systemctl daemon-reload
+sudo systemctl restart project_name
+
+
+===== CONNECT THE DOMAIN NAME ======
+sudo nano /etc/nginx/sites-available/server_domain_or_IP
+server {
+    listen 80;
+    server_name server_domain_or_IP;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /home/rider/projects/project_name;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/project_name.sock;
+    }
+}
+
+LINK THE SITE
+sudo ln -s /etc/nginx/sites-available/server_domain_or_IP /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+
+GET A CERTIFICATE
+sudo apt remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot --nginx -d server_domain_or_IP
+
+==== SET UP AUTO DEPLOY MECHANISM ====
+cd
+sudo nano serve_project.sh
+
+
+#!/bin/bash
+# Exit if any command fails
+set -e  
+echo "Starting deployment..."
+# Navigate to the project directory
+cd ~/projects/report_manager || exit
+# Reset and pull latest changes from Git
+sudo git reset --hard
+sudo git pull -f origin main
+# Activate the virtual environment
+source ~/projects/oneklassenv/bin/activate  
+# Collect static files
+python manage.py collectstatic --noinput  
+# Deactivate virtual environment
+deactivate  
+# Reload systemd and restart services
+sudo systemctl daemon-reload
+sudo systemctl restart report_manager
+sudo systemctl restart nginx
+
+echo "✅ Successfully Deployed and Restarted"
+
+save and exit
+
+MAKE IT Executable ON SIMPLE COMMAND
+chmod +x serve_project.sh
+./serve_project.sh
+
+DONE
