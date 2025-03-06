@@ -6,7 +6,6 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
     <title>Report Manager Sign Up</title>
-    <meta name="needed_data" content="{{needed_data}}">
 </head>
 <body>
     <div class="popalertBox">
@@ -50,33 +49,28 @@
     </div>
     <div class="wrapper">
         <div class="title-text">
-          <div class="title login">Welcome</div>
-          <div class="title signup">Account</div>
+          <div class="title login">Summary</div>
+          <div class="title signup">Report Data</div>
         </div>
         <div class="form-container">
           <div class="slide-controls">
             <input type="radio" name="slide" id="login" checked>
             <input type="radio" name="slide" id="signup">
-            <label for="login" class="slide login">Dashboard</label>
-            <label for="signup" class="slide signup">Account</label>
+           <label for="login" class="slide login">Draft</label>
+            <label for="signup" class="slide signup">Submit</label>
             <div class="slider-tab"></div>
           </div>
           <div class="form-inner">
             <form action="#" class="login">
-                <h3 style="padding: 5px; margin-bottom: 20px;">My Schedules</h3>
+                <h3 style="padding: 5px; margin-bottom: 20px;"></h3>
                 <div class="field my_schedules" style="height: 450px;">                    
-                    <div class="schedule">
-                        <div class="date">24th April; 2024</div>
-                        <div class="filldata">Enter report</div>
+                    <div class="draft" style="display: flex;">
+                        <textarea placeholder="Enter summary here" style="width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input" id="draft"></textarea>
                     </div>
-                    <div class="schedule">
-                        <div class="date">25th April; 2024</div>
-                        <div class="filldata">Enter report</div>
-                    </div>
-                    <div class="schedule">
-                        <div class="date">27th April; 2024</div>
-                        <div class="filldata">Enter report</div>
-                    </div>
+                </div>
+                <div class="field btn" id="logout">
+                  <div class="btn-layer"></div>
+                  <input type="submit" value="Save Draft">
                 </div>
             </form>
 
@@ -86,11 +80,11 @@
                     justify-content: space-between;">
                 
                 <div style="font-size: 20px; font-weight: bold; padding: 10px;">
-                    Welcome Back {{name}}
+                    Meeting Details
                 </div>
               <div class="field btn" id="logout">
                 <div class="btn-layer"></div>
-                <input type="submit" value="Log Out">
+                <input type="submit" value="Submit and Exit">
               </div>
             </form>
           </div>
@@ -320,8 +314,7 @@ form .btn input[type="submit"]{
 
 </style>
 <script>
-    
-    const loginText = document.querySelector(".title-text .login");
+      const loginText = document.querySelector(".title-text .login");
       const loginForm = document.querySelector("form.login");
       const loginBtn = document.querySelector("label.login");
       const signupBtn = document.querySelector("label.signup");
@@ -336,13 +329,9 @@ form .btn input[type="submit"]{
         loginText.style.marginLeft = "0%";
       });
       
-    $("#logout").click(()=>{
-      window.location.href = "./logout";
-    })
 
-    $(".schedule").click(()=>{
-      window.location.href = "./report/asd";
-    })
-    
+      $("#logout").click(()=>{
+        window.location.href = "./logout";
+      })
 </script>
 </html>

@@ -1,5 +1,5 @@
 STEPS TO DEPLOY ON MY CLOUD
-
+https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu#step-8-checking-for-the-gunicorn-socket-file
 
 CREATE A GIT REPO 
 

@@ -23,13 +23,30 @@ def dashboard(response):
             
     #UPDATE THE USER KEY EXPIRY SINCE USER IS ACTIVE
     response.session.set_expiry(864000) #SHIFTS TO 10 DAYS FROM NOW
-    user_code = response.session['user_data'].get("user_code")
     
     qset = {
-        'login_type':'-'
+        "user_data":response.session['user_data'],
+        "name":response.session['user_data']['name']
     }
 
     return render(response, "dashboard.html", qset)
+
+def report(response, report_code):
+    if not response.session.get("user_data"):
+        response.session.flush()
+        return redirect("/login")
+            
+    #UPDATE THE USER KEY EXPIRY SINCE USER IS ACTIVE
+    response.session.set_expiry(864000) #SHIFTS TO 10 DAYS FROM NOW
+    user_code = response.session['user_data'].get("user_code")
+    
+    qset = {
+        'draft':"Here is the draft",
+        'login_type':'-'
+    }
+
+    return render(response, "report.html", qset)
+
 
 def logout(response):
     response.session.flush()
