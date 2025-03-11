@@ -601,8 +601,8 @@ class UserAPI(View):
             user_set2 = User.objects.filter(email=data['partner'])
             u_data2 = user_set2[0]
 
-            # if not u_data2.schedule.get(data["report_code"]):
-            if 1==2:
+            if not u_data2.schedule.get(data["report_code"]):
+            # if 1==2:
 
                 #SEND THE USER A CONFIRMATION MAIL
                 context = {
