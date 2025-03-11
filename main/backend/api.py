@@ -627,6 +627,8 @@ class UserAPI(View):
                 message.send()
             callresponse = {
                 'passed': True,
+                "email":u_data2.email,
+                'link':"https://educateoauife.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
                 'response':{},
                 'error':{}
             }
