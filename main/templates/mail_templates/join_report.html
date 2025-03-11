@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"> -->
+    <title>Educate OAU</title>
+</head>
+<body style="font-family: 'Poppins', sans-serif;">
+    <div class="content" style="width: 95%;
+        background-color: rgb(218, 218, 248);
+        border-radius: 15px;
+        padding: 10px;">
+        <div class="head" style="border-bottom: 2px solid rgb(121, 121, 121);
+        padding: 10px 0;">
+            <div class="sendset" style="display: flex;">
+                <img  style="height: 80px; width: 80px; border-radius: 50%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTU854bgY0_dgNM-eZ_8gKL706Zaeykqc6Hew&s"/>
+
+                <div class="det-hold c-vert" style="margin-left: 10px; margin-top: 20px;
+                justify-content: center;">
+                    <span class="name top" style="padding:10px 4px; font-weight: bold;font-size: 15px;">Educate OAU</span>
+                    <br>
+                    <span class="name bot" style="padding:0px 4px; color: grey; font-size: 12px;">@Obafemi Awolowo University, Ile-Ife</span>
+                </div>
+            </div>
+        </div>
+        <div class="body" style="padding: 10px;
+        font-size: 13px;">
+            <p>
+                Hello {{invited_name}}<br><br>
+
+                You have been invited to fill the supervisor-supervisee interaction form with {{inviter_name}}
+                for {{datename}}. 
+                Please click the link below to use accept the form and fill the form
+                <br>
+                <br>
+                <a href="{{confirm_link}}" style="display: block; background-color: blue; padding: 10px; border-radius: 5px; color: white;text-align: center; text-decoration: none;">Fill form</a>
+
+                <br>
+                Or use the link below
+                <br><br>
+                <a href="{{confirm_link}}">{{confirm_link}}</a>
+                
+            </p>
+        </div>
+        
+            
+    </div>
+</body>
+</html>

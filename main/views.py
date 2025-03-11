@@ -74,6 +74,28 @@ def report(response, report_code):
     return render(response, "report.html", qset)
 
 
+def join_report(response, user_code, inviter_code, report_code):
+    report_code = str(report_code)
+    user_set = User.objects.filter(user_code=user_code)
+    user_set2 = User.objects.filter(user_code=inviter_code)
+    u_data = user_set[0]
+    u_data2 = user_set2[0]
+
+    if u_data.schedule.get(report_code):
+        return redirect("/report/" + report_code)
+
+    u_data.schedule[report_code] = {
+        "partner":u_data2.email, 
+        "partner_type":u_data2.user_type,
+        "draft":"Start draft...",
+        "status":"unsaved", 
+        "new_time":u_data2.schedule[report_code]['new_time']
+    }
+    u_data.save()
+    return redirect("/report/" + report_code)
+    
+
+
 def logout(response):
     response.session.flush()
     return redirect("/login")

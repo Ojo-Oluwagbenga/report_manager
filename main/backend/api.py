@@ -598,6 +598,32 @@ class UserAPI(View):
                 u_data.schedule[data["report_code"]]['status'] = 'saved'
 
             u_data.save()
+            user_set2 = User.objects.filter(email=data['partner'])
+            u_data2 = user_set2[0]
+
+            if not u_data2.schedule[data["report_code"]]:
+                
+                #SEND THE USER A CONFIRMATION MAIL
+                context = {
+                    "confirm_link": "https://educateoauife.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + data["report_code"],
+                    "inviter_name": u_data.name,
+                    "invited_name": u_data2.name,
+                    "datename":data['datename']
+                }
+                html_message = render_to_string("mail_templates/join_report.html", context=context)
+                plain_message = strip_tags(html_message)
+
+                message = EmailMultiAlternatives(
+                    subject = "Supervisor-supervisee Review",
+                    body = plain_message,
+                    from_email = None,
+                    to= [u_data2.email]
+                )
+
+                message.attach_alternative(html_message, "text/html")
+
+                #INCLUDE THIS IN PRODUCTION
+                message.send()
             callresponse = {
                 'passed': True,
                 'response':{},
