@@ -601,8 +601,8 @@ class UserAPI(View):
             user_set2 = User.objects.filter(email=data['partner'])
             u_data2 = user_set2[0]
 
-            if not u_data2.schedule[data["report_code"]]:
-                
+            if not u_data2.schedule.get(data["report_code"]):
+
                 #SEND THE USER A CONFIRMATION MAIL
                 context = {
                     "confirm_link": "https://educateoauife.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + data["report_code"],
