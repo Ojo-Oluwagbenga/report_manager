@@ -467,7 +467,20 @@ class UserAPI(View):
             }
             data['user_code'] = 'dummy'
             data['password'] = make_password(data['password'])
-            data['join_time'] = int (time.time())
+            data['join_time'] = 10
+            current_time = int (time.time()*1000) #TIME IN MILLISEC
+            data['schedule'] = {}
+            days_30 = 2592000000
+            for i in range(6):
+                data['schedule'][str(current_time )] = {
+                        "partner":"nil", 
+                        "partner_type":"nil",
+                        "draft":"Start draft...",
+                        "status":"unsaved", 
+                        "new_time":current_time
+                    }
+                current_time += days_30
+            
             user_sl = ModelSL(data={**data}, model=User, extraverify={})
 
             if (not user_sl.is_valid()):
@@ -497,6 +510,18 @@ class UserAPI(View):
                 'email':data['email'],
                 'error':{},
             }
+            new_data =  {
+                'loggedin':True,
+                "email":data["email"],
+                "user_type":data["user_type"],
+                "schedule":data["schedule"],
+                "name":data["name"],
+            }
+            callresponse['response'] = {**new_data}   
+            GeneralAPI.init_user_session(response, {**new_data})
+            response.session.set_expiry(864000) #10 DAYS - GETS UPDATED WHEN DASHBOARD LOADS/PAYMENT/INITIATE ATTENDANCE
+            callresponse['response']['message'] = ("User found and logged in")
+                
             return HttpResponse(json.dumps(callresponse))
         else:
             return HttpResponse("<div style='position: fixed; height: 100vh; width: 100vw; text-align:center; display: flex; justify-content: center; flex-direction: column; font-weight:bold>Page Not accessible<div>")
@@ -536,6 +561,8 @@ class UserAPI(View):
                 "email":u_data.email,
                 "user_type":u_data.user_type,
                 "name":u_data.name,
+                "schedule":u_data.schedule,
+                "user_code":u_data.user_code,
             }
             callresponse['response'] = {**new_data}
             callresponse['time_data'] = time.time()
@@ -546,6 +573,36 @@ class UserAPI(View):
                     response.session.set_expiry(864000) #10 DAYS - GETS UPDATED WHEN DASHBOARD LOADS/PAYMENT/INITIATE ATTENDANCE
                     callresponse['response']['message'] = ("User found and logged in")
                 
+            return HttpResponse(json.dumps(callresponse))
+        else:
+            return HttpResponse("<div style='position: fixed; height: 100vh; width: 100vw; text-align:center; display: flex; justify-content: center; flex-direction: column; font-weight:bold>Page Not accessible<div>")
+
+    def save_draft(self, response):
+        if (response.method == "POST"):
+            data =  json.loads(response.body.decode('utf-8'))
+            callresponse = {
+                'passed': False,
+                'response':{},
+                'error':{}
+            }
+            user_code = response.session['user_data']['user_code']
+
+
+            #CHECK PASSWORD
+            user_set = User.objects.filter(user_code=user_code)
+            u_data = user_set[0]
+            u_data.schedule[data["report_code"]]['draft'] = data['draft']
+            u_data.schedule[data["report_code"]]['new_time'] = data['new_time']
+            u_data.schedule[data["report_code"]]['partner'] = data['partner']
+            if (data.get("status") == 'saved'):
+                u_data.schedule[data["report_code"]]['status'] = 'saved'
+
+            u_data.save()
+            callresponse = {
+                'passed': True,
+                'response':{},
+                'error':{}
+            }
             return HttpResponse(json.dumps(callresponse))
         else:
             return HttpResponse("<div style='position: fixed; height: 100vh; width: 100vw; text-align:center; display: flex; justify-content: center; flex-direction: column; font-weight:bold>Page Not accessible<div>")

@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
     <title>Report Manager Sign Up</title>
-    <meta name="needed_data" content="{{needed_data}}">
+    <meta name="schedule" content="{{schedule}}">
 </head>
 <body>
     <div class="popalertBox">
@@ -64,17 +64,9 @@
           <div class="form-inner">
             <form action="#" class="login">
                 <h3 style="padding: 5px; margin-bottom: 20px;">My Schedules</h3>
-                <div class="field my_schedules" style="height: 450px;">                    
+                <div class="field my_schedules" id="schedule_holder" style="height: 450px;">                    
                     <div class="schedule">
                         <div class="date">24th April; 2024</div>
-                        <div class="filldata">Enter report</div>
-                    </div>
-                    <div class="schedule">
-                        <div class="date">25th April; 2024</div>
-                        <div class="filldata">Enter report</div>
-                    </div>
-                    <div class="schedule">
-                        <div class="date">27th April; 2024</div>
                         <div class="filldata">Enter report</div>
                     </div>
                 </div>
@@ -82,8 +74,7 @@
 
             <form action="#" class="signup" style="
                     display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;">
+                    flex-direction: column;">
                 
                 <div style="font-size: 20px; font-weight: bold; padding: 10px;">
                     Welcome Back {{name}}
@@ -109,6 +100,10 @@
         margin: 20px auto;
         cursor: pointer;
         transition: all 0.2s linear;
+    }
+    .schedule.saved{
+        background-color: #cdcdcd;
+        color: grey;
     }
 
     .schedule:hover{
@@ -340,11 +335,53 @@ form .btn input[type="submit"]{
       });
       
     $("#logout").click(()=>{
+      
       window.location.href = "./logout";
     })
 
-    $(".schedule").click(()=>{
-      window.location.href = "./report/asd";
+    
+
+
+    $(document).ready(function(){
+      function getMDate(datestamp) {
+          let dateObj = new Date(Number(datestamp))
+          let day = dateObj.toLocaleString('en-US', { weekday: 'long' }); // "Wednesday"
+          let date = dateObj.getDate(); // 21
+          let month = dateObj.toLocaleString('en-US', { month: 'long' });
+          let year = dateObj.getFullYear(); // 1970
+          let sf = ''
+          if (day >= 11 && day <= 13) sf =  "th"; // Special case for 11th, 12th, 13th
+          switch (day % 10) {
+              case 1: sf =  "st";
+              case 2: sf =  "nd";
+              case 3: sf =  "rd";
+              default: sf =  "th";
+          }
+
+          
+
+          return `${day}, ${month} ${date}${sf}, ${year}`
+      }
+
+      let schedule = JSON.parse( $("meta[name='schedule']").attr("content") );
+      console.log(schedule)
+      let sch = "";
+      for (let key in schedule) {
+        let datastamp = schedule[key]['new_time']
+        sch += `<div class="schedule ${schedule[key]['status']}" id="${key}">
+                    <div class="date">${getMDate(datastamp)}</div>
+                    <div class="filldata">Fix Report</div>
+                </div>`
+      }
+      $('#schedule_holder').html(sch)
+      $(".schedule").click(function(){
+        if ($(this).hasClass('saved')){
+          alert('Your response has been collected for this meeting');
+          return
+        }
+        window.location.href = "./report/" + $(this).attr("id");
+      })
+
     })
     
 </script>

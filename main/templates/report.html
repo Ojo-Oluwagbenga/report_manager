@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <title>Report Manager Sign Up</title>
+    <meta name="report_code" content="{{report_code}}">
+    <meta name="new_time" content="{{new_time}}">
+    <meta name="partner" content="{{partner}}">
+    <meta name="users" content="{{users}}">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js" defer></script>
 </head>
 <body>
     <div class="popalertBox">
@@ -47,49 +54,106 @@
 
         </script>
     </div>
-    <div class="wrapper">
+    <div class="wrapper" style="position: relative;">
         <div class="title-text">
           <div class="title login">Summary</div>
           <div class="title signup">Report Data</div>
         </div>
+        
         <div class="form-container">
+          <a style="    background-color: black;
+          color: white;
+          padding: 4px 10px;
+          border-radius: 5px;
+          display: flex;
+          width: max-content;
+          position: absolute;
+          top: 36px;" href="/dashboard">Dashboard</a>
+
           <div class="slide-controls">
             <input type="radio" name="slide" id="login" checked>
             <input type="radio" name="slide" id="signup">
-           <label for="login" class="slide login">Draft</label>
+            
+            <label for="login" class="slide login">Draft</label>
             <label for="signup" class="slide signup">Submit</label>
             <div class="slider-tab"></div>
           </div>
+
           <div class="form-inner">
+
             <form action="#" class="login">
                 <h3 style="padding: 5px; margin-bottom: 20px;"></h3>
-                <div class="field my_schedules" style="height: 450px;">                    
+                <div id="user_select" style="margin: 15px 10px;"  x-data="dropdownComponent()">
+                  <!-- Dropdown Button -->
+                  <button style="width: max-content;" @click="open = !open" 
+                      class="w-64 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md flex justify-between items-center">
+                      <span id="selected_user" x-text="selected"></span>
+                      <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 011.06 1.06l-4.24 4a.75.75 0 01-1.06 0l-4.24-4a.75.75 0 01-.02-1.06z" clip-rule="evenodd" />
+                      </svg>
+                  </button>
+          
+                  <!-- Dropdown Menu -->
+                  <div x-show="open" @click.outside="open = false" 
+                      class="absolute mt-2 w-64 bg-white rounded-lg shadow-lg border overflow-hidden">
+                      <ul>
+                          <template x-for="item in items" :key="item">
+                              <li @click="selected = item; open = false"
+                                  class="px-4 py-2 hover:bg-blue-100 cursor-pointer" x-text="item"></li>
+                          </template>
+                      </ul>
+                  </div>
+                </div>
+
+                <div class="bg-white p-3 rounded-2xl">
+                    <label for="datePicker" class="block text-lg font-semibold text-gray-700 mb-2">Select the meeting date:</label>
+                    <input type="text" id="datePicker" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Pick a date">
+                </div>
+                <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+                
+                
+                <div class="field my_schedules" style="height: max-content;">                    
                     <div class="draft" style="display: flex;">
-                        <textarea placeholder="Enter summary here" style="width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input" id="draft"></textarea>
+                        <textarea id="summary" placeholder="Enter summary here" 
+                        style="width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input" id="draft"
+                        >{{draft}}</textarea>
                     </div>
                 </div>
-                <div class="field btn" id="logout">
-                  <div class="btn-layer"></div>
-                  <input type="submit" value="Save Draft">
+                <div class="field btn" id="save_draft" style="height: max-content;">
+                  <div class="" style="    font-size: 15px;
+                  text-align: center;
+                  background-color: blue;
+                  padding: 10px;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: center;
+                  color: white;"> Save Draft</div>
+                  
                 </div>
             </form>
 
             <form action="#" class="signup" style="
                     display: flex;
-                    flex-direction: column;
-                    justify-content: space-between;">
+                    flex-direction: column;">
                 
-                <div style="font-size: 20px; font-weight: bold; padding: 10px;">
-                    Meeting Details
+                <div style="font-size: 16px; padding: 10px; display: flex;">
+                  <div style="font-weight: bold; padding: 0px 10px;"> Meeting With:</div><div id="mname"> Ojo John</div>
                 </div>
-              <div class="field btn" id="logout">
-                <div class="btn-layer"></div>
-                <input type="submit" value="Submit and Exit">
-              </div>
+                <div style="font-size: 16px; padding: 10px; display: flex;">
+                  <div style="font-weight: bold; padding: 0px 10px;"> By:</div><div id="mdate"> March 23</div>
+                </div>
+                <div style="font-size: 16px; padding: 10px; display: flex;">
+                  <div style="font-weight: bold; padding: 0px 10px;"> We discussed:</div><div id="msummary"> March 23</div>
+                </div>
+                <div class="field btn" id="saveexit" style="font-size: 16px;">
+                  <div class="btn-layer"></div>
+                  <input style="font-size: 16px;" type="submit" value="Submit and Exit">
+                </div>
             </form>
           </div>
         </div>
-      </div>
+        
+    </div>
   
 </body>
 <style>
@@ -162,7 +226,7 @@ html,body{
 }
 .wrapper .title{
   width: 50%;
-  font-size: 35px;
+  font-size: 30px;
   font-weight: 600;
   text-align: center;
   transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
@@ -326,6 +390,20 @@ form .btn input[type="submit"]{
         loginForm.style.marginLeft = "-50%";
         loginText.style.marginLeft = "-50%";
         
+        let user = $("#selected_user").text();
+        if (user == 'Select supervisee or supervisor'){
+          $("#mname").text("Name not set")
+        }else{
+          $("#mname").text(user)
+        }
+        let summary = $("#summary").val();
+        if (summary == ''){
+          $("#msummary").text("No draft")
+        }else{
+          $("#msummary").text(summary)
+        }
+        
+        
       });
       loginBtn.onclick = (()=>{
         loginForm.style.marginLeft = "0%";
@@ -336,5 +414,167 @@ form .btn input[type="submit"]{
       $("#logout").click(()=>{
         window.location.href = "./logout";
       })
+
+      function getMDate(datestamp) {
+          let dateObj = new Date(Number(datestamp))
+          let day = dateObj.toLocaleString('en-US', { weekday: 'long' }); // "Wednesday"
+          let date = dateObj.getDate(); // 21
+          let month = dateObj.toLocaleString('en-US', { month: 'long' });
+          let year = dateObj.getFullYear(); // 1970
+          let sf = ''
+          if (day >= 11 && day <= 13) sf =  "th"; // Special case for 11th, 12th, 13th
+          switch (day % 10) {
+              case 1: sf =  "st";
+              case 2: sf =  "nd";
+              case 3: sf =  "rd";
+              default: sf =  "th";
+          }
+
+          
+
+          return `${day}, ${month} ${date}${sf}, ${year}`
+      }
+
+      
+      function setDateSelector(){
+         // Example timestamp (UNIX timestamp in milliseconds)
+         let timestamp = Number($("meta[name='new_time']").attr("content")); // Example: January 1, 2023
+        console.log(timestamp)
+        // Convert timestamp to Date object
+        let defaultDate = new Date(timestamp);
+        $("#mdate").text(getMDate(timestamp))
+
+        // Initialize Flatpickr with default date
+        flatpickr("#datePicker", {
+            dateFormat: "F j, Y", // Example: January 1, 2023
+            defaultDate: defaultDate, // Set default date from timestamp
+            altInput: true,
+            altFormat: "d-m-Y",  // Example: 01-01-2023
+            minDate: "today",     // Disable past dates
+            disableMobile: true,  // Force desktop-style picker on mobile
+            onChange: function(selectedDates, dateStr, instance) {
+                // Display selected date
+                let timeValue = document.getElementById('datePicker').value;     
+                let tstamp = new Date(timeValue)/1
+                console.log(tstamp)
+                $("#mdate").text(getMDate(tstamp))
+            }
+        });
+      }
+      
+      function dropdownComponent() {
+        let partner = $("meta[name='partner']").attr("content");
+
+          return {
+              open: false,
+              selected: partner != "nil" ? partner: 'Select supervisee or supervisor',
+              items: JSON.parse($("meta[name='users']").attr("content")),
+              selectItem(item) {
+                  this.selected = item;
+                  this.open = false;
+                  let text = $("#selected_user").text();
+                  console.log(text);
+              },
+              updateList(newItems) {
+                  this.items = newItems;
+              }
+          };
+      }
+      setDateSelector();
+      
+      $('#save_draft').click(function(){
+        let timeValue = document.getElementById('datePicker').value;     
+        let tstamp = new Date(timeValue)/1
+
+
+        let user = $("#selected_user").text();
+        if (user == 'Select supervisee or supervisor'){
+          popAlert("Please Select supervisee or supervisor");
+          return
+        }
+        $("#mname").text(user)
+
+        let summary = $("#summary").val();
+        if (summary == ''){
+          popAlert("Please enter your meeting summary");
+          return
+        }
+        $("#msummary").text(summary)
+        
+        axios({
+            method: 'POST',
+            url: '../api/user/save_draft',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                "X-CSRFToken" : $("input[name='csrfmiddlewaretoken']").val()
+            },
+            data: {
+                report_code: $("meta[name='report_code']").attr("content"),
+                draft: summary,
+                new_time:tstamp,
+                partner:user,
+            }
+        }).then(response => {
+            if (response.data.passed){
+              popAlert('Your draft has been saved. Click submit when done')
+            }
+            console.log("Paasees", response);
+        }).catch(error => console.error(error))
+
+
+
+      })
+
+      $('#saveexit').click(function(){
+        alert('Sure to submit? You can not edit after')
+        let timeValue = document.getElementById('datePicker').value;     
+        let tstamp = new Date(timeValue)/1
+
+
+        let user = $("#selected_user").text();
+        if (user == 'Select supervisee or supervisor'){
+          popAlert("Please Select supervisee or supervisor");
+          return
+        }
+        $("#mname").text(user)
+
+        let summary = $("#summary").val();
+        if (summary == ''){
+          popAlert("Please enter your meeting summary");
+          return
+        }
+        $("#msummary").text(summary)
+        
+        axios({
+            method: 'POST',
+            url: '../api/user/save_draft',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                "X-CSRFToken" : $("input[name='csrfmiddlewaretoken']").val()
+            },
+            data: {
+                report_code: $("meta[name='report_code']").attr("content"),
+                draft: summary,
+                new_time:tstamp,
+                partner:user,
+                status:'saved'
+            }
+        }).then(response => {
+            if (response.data.passed){
+              popAlert('Your response has been collected. Thank you!')
+              setTimeout(() => {
+                window.location.href = '/dashboard'
+              }, 1000);
+            }
+            console.log("Paasees", response);
+        }).catch(error => console.error(error))
+
+
+
+      })
+
+
 </script>
 </html>

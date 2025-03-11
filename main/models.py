@@ -10,6 +10,7 @@ class User(models.Model):
     user_code = models.CharField(max_length=50)   
     user_type = models.CharField(max_length=50) #supervisor or supervisee
     draft = models.JSONField(null=True)
+    schedule = models.JSONField(null=True)
     '''
         {
             supervisor_id:sid,
