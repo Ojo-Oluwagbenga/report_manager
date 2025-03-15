@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctoral Supervision Questionnaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</head>
+<body class="bg-blue-50 text-gray-900">
+    <div class="max-w-3xl mx-auto bg-white p-6 mt-10 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-blue-700">Doctoral Supervision Questionnaire</h2>
+        <p class="mt-2 text-sm text-gray-700"><strong>Likert Scale Key:</strong> 1 - Strongly Disagree, 2 - Disagree, 3 - Slightly Disagree, 4 - Neither Agree nor Disagree, 5 - Slightly Agree, 6 - Agree, 7 - Strongly Agree</p>
+        <form id="questionnaireForm" class="mt-4 space-y-6">
+            <h3 class="text-lg font-semibold text-blue-600">Communication</h3>
+            <div id="questionsContainer" class="space-y-6"></div>
+            
+            <h3 class="text-lg font-semibold text-blue-600 mt-6">Open-ended Questions</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-medium text-gray-800">How confident are you in your ability to navigate the research process with the guidance provided by your supervisor?</label>
+                    <textarea name="open1" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium text-gray-800">Do you feel comfortable approaching your supervisor with questions or concerns related to your research?</label>
+                    <textarea name="open2" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium text-gray-800">How satisfied are you with the level of autonomy you have in managing your research project?</label>
+                    <textarea name="open3" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium text-gray-800">What aspects of your supervision experience would you like to see improved?</label>
+                    <textarea name="open4" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const questions = [
+                "You schedule regular formal meetings to discuss your research progress.",
+                "You are satisfied with the frequency and quality of communication with your supervisor.",
+                "Your supervisor is responsive to your emails and requests for information.",
+                "The feedback you receive on your research drafts and presentations is constructive and detailed.",
+                "You feel comfortable providing critical feedback to your supervisor.",
+                "You receive feedback on your research progress and areas for improvement often enough.",
+                "Your supervisor provides emotional support during challenging research periods.",
+                "You feel supported in accessing the necessary resources and funding for your research.",
+                "Your supervisor effectively addresses any concerns or challenges you may face during your doctoral studies.",
+                "Your supervisor challenges you to think critically about your research questions and methodology.",
+                "You feel encouraged to explore new ideas and perspectives related to your research topic.",
+                "You are engaged in intellectual discussions about your research with your supervisor.",
+                "The expectations regarding your research project goals and deliverables are clear.",
+                "You feel adequately guided in the research process, including data collection, analysis, and interpretation.",
+                "You are satisfied with your supervisor's level of expertise on your research topic.",
+                "You are effectively guided in developing your research design and methodology.",
+                "You had adequate support in navigating complex research methods.",
+                "You got sufficient guidance in identifying relevant literature and critically evaluating sources.",
+                "You were adequately assisted in synthesizing research findings.",
+                "You receive support in analyzing your data and interpreting results.",
+                "Your supervisor encourages critical thinking and consideration of alternative explanations.",
+                "Your supervisor provides guidance in improving your academic writing skills.",
+                "Your supervisor provides feedback on your drafts that are constructive and timely.",
+                "Your supervisor encourages you to present your research at conferences and publish your findings.",
+                "Your supervisor discusses career options and guides post-doctoral opportunities or future employment.",
+                "Your supervisor supports your professional development goals.",
+                "You are satisfied with your overall doctoral supervision experience.",
+                "You feel well-prepared to complete your doctoral research based on your current supervision."
+            ];
+            
+            const questionsContainer = document.getElementById("questionsContainer");
+            questions.forEach((q, i) => {
+                const questionElement = document.createElement("div");
+                questionElement.innerHTML = `
+                    <div class='text-gray-800 font-medium'>${q}</div>
+                    <div class='flex justify-between mt-2 space-x-4'>
+                        ${[...Array(7).keys()].map(j => `
+                            <label class='flex flex-col items-center'>
+                                <input type='radio' name='q${i+1}' value='${j+1}' class='form-radio text-blue-600 mb-1'>
+                                <span>${j+1}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionElement);
+            });
+        });
+
+        document.getElementById("questionnaireForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let formData = new FormData(event.target);
+            let data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            let allFilled = true;
+            
+            formData.forEach((value, key) => {
+                if (!value) allFilled = false;
+                data[key] = value;
+            });
+            
+            // if (!allFilled) {
+            //     alert("Please answer all questions before submitting.");
+            //     return;
+            // }
+            
+            axios({
+                method: 'POST',
+                url: '../api/user/questionaire',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    "X-CSRFToken" : $("input[name='csrfmiddlewaretoken']").val()
+                },
+                data: {
+                    type: 'first',
+                    answers:data,
+                }
+            }).then(response => {
+                if (response.data.passed){
+                    alert('Your response has been collected. Thank you!')
+                
+                }
+                console.log("Paasees", response);
+            }).catch(error => console.error(error))
+        });
+    </script>
+</body>
+</html>

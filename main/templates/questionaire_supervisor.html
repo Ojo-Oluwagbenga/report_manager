@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctoral Supervision Questionnaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</head>
+<body class="bg-blue-50 text-gray-900">
+    <div class="max-w-3xl mx-auto bg-white p-6 mt-10 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold text-blue-700">Doctoral Supervision Questionnaire</h2>
+        <p class="mt-2 text-sm text-gray-700"><strong>Likert Scale Key:</strong> 1 - Strongly Disagree, 2 - Disagree, 3 - Slightly Disagree, 4 - Neither Agree nor Disagree, 5 - Slightly Agree, 6 - Agree, 7 - Strongly Agree</p>
+        <form id="questionnaireForm" class="mt-4 space-y-6">
+            <h3 class="text-lg font-semibold text-blue-600">Supervisors only</h3>
+            <div id="questionsContainer" class="space-y-6"></div>
+            
+            <h3 class="text-lg font-semibold text-blue-600 mt-6">Open-ended Questions</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block font-medium text-gray-800">How effectively do you monitor your supervisee's progress and identify potential roadblocks in their research?</label>
+                    <textarea name="open1" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What strategies do you use to foster your supervisee's independence and critical thinking skills?</label>
+                    <textarea name="open2" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">How do you ensure that your supervisee is adequately prepared for presenting their research at conferences and publishing their findings?</label>
+                    <textarea name="open3" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What aspects of your supervision experience would you like to see improved?</label>
+                    <textarea name="open4" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-blue-600 mt-6">Instructions: Please answer the following questions about the doctoral program in OAU.</h3>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What are the requirements for recruitment into a PhD program at OAU?</label>
+                    <textarea name="open5" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What is the format for PhD supervision in your field and department (thesis, publications, hybrid)?</label>
+                    <textarea name="open6" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What are the regulations for maintaining scientific integrity and for sanctioning misconduct (such as plagiarism)?</label>
+                    <textarea name="open7" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">Does OAU recognise social responsibility? If so, how is this reflected in policies and practice?</label>
+                    <textarea name="open8" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">Does OAU regulate supervision through a contract or other document? If so, bring a copy to the workshop?</label>
+                    <textarea name="open9" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">How does OAU prepare and support supervisors for this role?</label>
+                    <textarea name="open10" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">Do PhD candidates in OAU need (or get) multi-disciplinary supervision?</label>
+                    <textarea name="open11" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What support mechanisms (if any) are available in OAU for supervisor–supervisee relationships?</label>
+                    <textarea name="open12" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">How are quality control and assurance integrated at different levels of PhD training in OAU?</label>
+                    <textarea name="open13" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block font-medium text-gray-800">What are the rules and tools for academic mentorship at OAU? Please bring a copy to the workshop.</label>
+                    <textarea name="open14" class="w-full p-2 border rounded-md mt-2"></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="mt-6 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const questions = [
+                // Communication
+                "You schedule regular formal meetings to discuss your research progress.",
+                "You are satisfied with the frequency and quality of communication with your supervisee.",
+                "Your supervisee is responsive to your emails and requests for information.",
+                
+                // Feedback
+                "The feedback you give on research drafts and presentations is constructive and detailed.",
+                "You feel comfortable providing critical feedback to your supervisee.",
+                "You give feedback on your research progress and areas for improvement often enough.",
+                
+                // Support
+                "You provide emotional support during challenging research periods for your supervisee.",
+                "You provide support for accessing the necessary resources and funding for research.",
+                "You effectively address any concerns or challenges your supervisee may face during their doctoral studies.",
+                
+                // Intellectual Stimulation
+                "You challenge your supervisee to think critically about their research questions and methodology.",
+                "Your supervisee feels encouraged to explore new ideas and perspectives related to their research topic.",
+                "You are engaged in intellectual discussions about your research with your supervisee.",
+                
+                // Research Guidance
+                "You adequately guide your supervisee in the research process, including data collection, analysis, and interpretation.",
+                "You are satisfied with your supervisee's level of expertise on their research topic.",
+                "You effectively guide your supervisee in developing their research design and methodology.",
+                "You provide adequate support in navigating complex research methods.",
+                "You provide sufficient guidance in identifying relevant literature and critically evaluating sources.",
+                "You adequately assist in synthesizing research findings.",
+                "You provide support in analyzing data and interpreting results.",
+                "You encourage your supervisee to critically think and consider alternative explanations.",
+                "You provide guidance in improving their academic writing skills.",
+                "You provide feedback on drafts that are constructive and timely.",
+                "You encourage your supervisee to present their research at conferences and publish their findings.",
+                "You discuss career options and guide your supervisee through post-doctoral opportunities or future employment.",
+                "You support their professional development goals.",
+                
+                // Overall Satisfaction
+                "You are satisfied with your overall doctoral supervision experience."
+            ]
+            const questionsContainer = document.getElementById("questionsContainer");
+            questions.forEach((q, i) => {
+                const questionElement = document.createElement("div");
+                questionElement.innerHTML = `
+                    <div class='text-gray-800 font-medium'>${q}</div>
+                    <div class='flex justify-between mt-2 space-x-4'>
+                        ${[...Array(7).keys()].map(j => `
+                            <label class='flex flex-col items-center'>
+                                <input type='radio' name='q${i+1}' value='${j+1}' class='form-radio text-blue-600 mb-1'>
+                                <span>${j+1}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionElement);
+            });
+        });
+
+        document.getElementById("questionnaireForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let formData = new FormData(event.target);
+            let data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            console.log("The data", data);
+
+            let allFilled = true;
+            
+            formData.forEach((value, key) => {
+                if (!value) allFilled = false;
+                data[key] = value;
+            });
+            
+            if (!allFilled) {
+                alert("Please answer all questions before submitting.");
+                return;
+            }
+            
+            axios({
+                method: 'POST',
+                url: '../api/user/questionaire',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    "X-CSRFToken" : $("input[name='csrfmiddlewaretoken']").val()
+                },
+                data: {
+                    type: 'first',
+                    answers:data,
+                }
+            }).then(response => {
+                if (response.data.passed){
+                    alert('Your response has been collected. Thank you!')                
+                }
+            }).catch(error => console.error(error))
+        });
+    </script>
+</body>
+</html>

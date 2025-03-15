@@ -29,6 +29,13 @@ def dashboard(response):
 
         user_set = User.objects.filter(user_code=user_code)
         u_data = user_set[0]
+
+        if u_data.questionaire:
+            if u_data.questionaire.get('status') != 'filled':
+                return redirect("/questionaire")
+        else:
+            return redirect("/questionaire")
+
         qset = {
             "user_data":response.session['user_data'],
             "name":response.session['user_data']['name'],
@@ -38,6 +45,7 @@ def dashboard(response):
         return render(response, "dashboard.html", qset)
 
     except Exception as e:
+        print (e)
         response.session.flush()
         return redirect("/login")
 
@@ -72,6 +80,23 @@ def report(response, report_code):
     }
 
     return render(response, "report.html", qset)
+
+def questionaire(response):
+    if not response.session.get("user_data"):
+        response.session.flush()
+        return redirect("/login")
+            
+    #UPDATE THE USER KEY EXPIRY SINCE USER IS ACTIVE
+    response.session.set_expiry(864000) #SHIFTS TO 10 DAYS FROM NOW
+    user_code = response.session['user_data'].get("user_code")
+    user_set = User.objects.filter(user_code=user_code)
+
+    u_data = user_set[0]
+
+    if u_data.user_type == 'supervisor':
+        return render(response, "questionaire_supervisor.html", {})
+    else:
+        return render(response, "questionaire_supervisee.html", {})
 
 
 def join_report(response, user_code, inviter_code, report_code):

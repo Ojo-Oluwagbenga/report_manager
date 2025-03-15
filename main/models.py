@@ -11,6 +11,7 @@ class User(models.Model):
     user_type = models.CharField(max_length=50) #supervisor or supervisee
     draft = models.JSONField(null=True)
     schedule = models.JSONField(null=True)
+    questionaire = models.JSONField(null=True)
     '''
         {
             supervisor_id:sid,

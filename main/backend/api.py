@@ -606,7 +606,7 @@ class UserAPI(View):
 
                 #SEND THE USER A CONFIRMATION MAIL
                 context = {
-                    "confirm_link": "https://educateoauife.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
+                    "confirm_link": "https://educateoau.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
                     "inviter_name": u_data.name,
                     "invited_name": u_data2.name,
                     "datename":data['datename']
@@ -629,6 +629,37 @@ class UserAPI(View):
                 'passed': True,
                 "email":u_data2.email,
                 'link':"https://educateoauife.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
+                'response':{},
+                'error':{}
+            }
+            return HttpResponse(json.dumps(callresponse))
+        else:
+            return HttpResponse("<div style='position: fixed; height: 100vh; width: 100vw; text-align:center; display: flex; justify-content: center; flex-direction: column; font-weight:bold>Page Not accessible<div>")
+
+    def questionaire(self, response):
+        if (response.method == "POST"):
+            data =  json.loads(response.body.decode('utf-8'))
+            callresponse = {
+                'passed': False,
+                'response':{},
+                'error':{}
+            }
+            user_code = response.session['user_data']['user_code']
+
+
+            #CHECK PASSWORD
+            user_set = User.objects.filter(user_code=user_code)
+            u_data = user_set[0]
+            u_data.questionaire = {
+                'status':'filled',
+                'type':data['type'], #EITHER FIRST OR THE SECOND
+                'answers':data['answers'],
+                'user_type':u_data.user_type
+            }
+            u_data.save()
+            
+            callresponse = {
+                'passed': True,
                 'response':{},
                 'error':{}
             }
