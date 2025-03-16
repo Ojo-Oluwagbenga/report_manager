@@ -118,28 +118,33 @@
                 <input value="{{report_data.title}}" type="text" id="thesisTitle" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter thesis title">
               </div>
               <div class="bg-white p-3 rounded-2xl">
-                <label for="intellectualSupport" class="block text-lg font-semibold text-gray-700 mb-2">Intellectual Support: notes on any skills picked up or feedback obtained?</label>
-                <textarea  id="intellectualSupport" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.intellectualSupport}}</textarea>
+                <label for="intellectualSupport" class="block text-lg font-semibold text-gray-700 mb-2">Intellectual Support:</label>
+                <textarea  placeholder="If skills are acquired, write specific examples" id="intellectualSupport" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.intellectualSupport}}</textarea>
             </div>
             
             <div class="bg-white p-3 rounded-2xl">
-                <label for="researchSkills" class="block text-lg font-semibold text-gray-700 mb-2">Pertinent Research Skills: notes on any skills picked up or feedback obtained?</label>
-                <textarea  id="researchSkills" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.researchSkills}}</textarea>
+                <label for="researchSkills" class="block text-lg font-semibold text-gray-700 mb-2">Pertinent Research Skills:</label>
+                <textarea placeholder="If skills are acquired, write specific examples"  id="researchSkills" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.researchSkills}}</textarea>
             </div>
             
             <div class="bg-white p-3 rounded-2xl">
-                <label for="communicationSkills" class="block text-lg font-semibold text-gray-700 mb-2">Interpersonal Communication Skills: notes on any skills picked up or feedback obtained?</label>
-                <textarea id="communicationSkills" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.communicationSkills}}</textarea>
+                <label for="communicationSkills" class="block text-lg font-semibold text-gray-700 mb-2">Interpersonal Communication Skills:</label>
+                <textarea placeholder="If skills are acquired, write specific examples" id="communicationSkills" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.communicationSkills}}</textarea>
+            </div>
+            <style>
+              /* textarea.topentry{
+                font-size: 10px;
+              } */
+            </style>
+            
+            <div class="bg-white p-3 rounded-2xl">
+                <label for="supportiveSkills" class="block text-lg font-semibold text-gray-700 mb-2">Supportive Skills:</label>
+                <textarea placeholder="If skills are acquired, write specific examples" id="supportiveSkills" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.supportiveSkills}}</textarea>
             </div>
             
             <div class="bg-white p-3 rounded-2xl">
-                <label for="supportiveSkills" class="block text-lg font-semibold text-gray-700 mb-2">Supportive Skills: notes on any skills picked up or feedback obtained?</label>
-                <textarea id="supportiveSkills" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.supportiveSkills}}</textarea>
-            </div>
-            
-            <div class="bg-white p-3 rounded-2xl">
-                <label for="timeManagement" class="block text-lg font-semibold text-gray-700 mb-2">Workload/Time Management: notes on any skills picked up or feedback obtained?</label>
-                <textarea id="timeManagement" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.timeManagement}}</textarea>
+                <label for="timeManagement" class="block text-lg font-semibold text-gray-700 mb-2">Workload/Time Management:</label>
+                <textarea placeholder="If skills are acquired, write specific examples" id="timeManagement" class="top_entry w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{report_data.timeManagement}}</textarea>
             </div>
                 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
                 
