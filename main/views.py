@@ -71,13 +71,11 @@ def report(response, report_code):
     u_data = user_set[0]
     
     qset = {
-        'login_type':'-',
-        'draft':u_data.schedule[report_code]['draft'],
-        'new_time':u_data.schedule[report_code]['new_time'],
-        'partner':u_data.schedule[report_code]['partner'],
+        'report_data':u_data.schedule[report_code],
         'report_code':report_code,
         'users':json.dumps(dlist)
     }
+    print (qset)
 
     return render(response, "report.html", qset)
 

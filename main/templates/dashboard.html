@@ -119,6 +119,7 @@
     }
     .schedule .filldata{
         width: max-content;
+        font-size: 13px;
         justify-self: right;
         align-self: flex-end;
         padding: 5px 10px;
@@ -241,6 +242,7 @@ input[type="radio"]{
 .form-inner form .field{
   height: 50px;
   width: 100%;
+  overflow-y: scroll;
   margin-top: 20px;
 }
 .form-inner form .field input{
@@ -370,7 +372,8 @@ form .btn input[type="submit"]{
         let datastamp = schedule[key]['new_time']
         sch += `<div class="schedule ${schedule[key]['status']}" id="${key}">
                     <div class="date">${getMDate(datastamp)}</div>
-                    <div class="filldata">Fix Report</div>
+                    <div class="extra" style="font-size: 15px; color: grey">Click to enter the details of the meeting</div>
+                    <div class="filldata">Enter Summary</div>
                 </div>`
       }
       $('#schedule_holder').html(sch)

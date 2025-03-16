@@ -191,7 +191,9 @@
                 }
             }).then(response => {
                 if (response.data.passed){
-                    alert('Your response has been collected. Thank you!')                
+                    alert('Your response has been collected. Thank you!')    
+                    window.location.href = './dashboard'
+
                 }
             }).catch(error => console.error(error))
         });

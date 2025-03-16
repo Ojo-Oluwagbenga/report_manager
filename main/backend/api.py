@@ -475,7 +475,7 @@ class UserAPI(View):
                 data['schedule'][str(current_time )] = {
                         "partner":"nil", 
                         "partner_type":"nil",
-                        "draft":"Start draft...",
+                        "draft":"",
                         "status":"unsaved", 
                         "new_time":current_time
                     }
@@ -591,9 +591,15 @@ class UserAPI(View):
             #CHECK PASSWORD
             user_set = User.objects.filter(user_code=user_code)
             u_data = user_set[0]
-            u_data.schedule[data["report_code"]]['draft'] = data['draft']
-            u_data.schedule[data["report_code"]]['new_time'] = data['new_time']
-            u_data.schedule[data["report_code"]]['partner'] = data['partner']
+
+            u_data.schedule[data["report_code"]]  = {
+                **data['top_entry'],
+                'draft':data['draft'],
+                'new_time':data['new_time'], # THIS IS THE DATE
+                'partner':data['partner'],
+                'time':data['time'],
+                'title':data['title'],
+            }
             if (data.get("status") == 'saved'):
                 u_data.schedule[data["report_code"]]['status'] = 'saved'
 
@@ -624,7 +630,7 @@ class UserAPI(View):
                 message.attach_alternative(html_message, "text/html")
 
                 #INCLUDE THIS IN PRODUCTION
-                message.send()
+                # message.send()
             callresponse = {
                 'passed': True,
                 "email":u_data2.email,
@@ -646,15 +652,13 @@ class UserAPI(View):
             }
             user_code = response.session['user_data']['user_code']
 
-
-            #CHECK PASSWORD
             user_set = User.objects.filter(user_code=user_code)
             u_data = user_set[0]
             u_data.questionaire = {
                 'status':'filled',
                 'type':data['type'], #EITHER FIRST OR THE SECOND
                 'answers':data['answers'],
-                'user_type':u_data.user_type
+                
             }
             u_data.save()
             

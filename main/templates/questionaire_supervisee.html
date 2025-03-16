@@ -107,10 +107,10 @@
                 data[key] = value;
             });
             
-            // if (!allFilled) {
-            //     alert("Please answer all questions before submitting.");
-            //     return;
-            // }
+            if (!allFilled) {
+                alert("Please answer all questions before submitting.");
+                return;
+            }
             
             axios({
                 method: 'POST',
@@ -127,9 +127,8 @@
             }).then(response => {
                 if (response.data.passed){
                     alert('Your response has been collected. Thank you!')
-                
+                    window.location.href = './dashboard'
                 }
-                console.log("Paasees", response);
             }).catch(error => console.error(error))
         });
     </script>
