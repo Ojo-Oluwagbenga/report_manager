@@ -92,14 +92,21 @@
                           <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.67l3.71-3.48a.75.75 0 011.06 1.06l-4.24 4a.75.75 0 01-1.06 0l-4.24-4a.75.75 0 01-.02-1.06z" clip-rule="evenodd" />
                       </svg>
                   </button>
-          
+
                   <!-- Dropdown Menu -->
                   <div x-show="open" @click.outside="open = false" 
                       class="absolute mt-2 w-64 bg-white rounded-lg shadow-lg border overflow-hidden">
+                      <input style="width: calc(100% - 20px);
+                      border: 1px solid #9b9b9b;
+                      margin: 10px;
+                      padding: 9px;
+                      border-radius: 4px;
+                      font-size: 14px;
+                      outline: none;" type="text" placeholder="Enter email to filter" id="email_filter">
                       <ul>
-                          <template x-for="item in items" :key="item">
+                          <template x-for="item in items" :key="item" :id="item">
                               <li @click="selected = item; open = false"
-                                  class="px-4 py-2 hover:bg-blue-100 cursor-pointer" x-text="item"></li>
+                                  class="px-4 py-2 hover:bg-blue-100 cursor-pointer email_entry" x-text="item"></li>
                           </template>
                       </ul>
                   </div>
@@ -152,7 +159,7 @@
                 <div class="field my_schedules" style="height: max-content;">     
                     <div style="font-weight: bold; padding: 10px 0;">My Overall reflections</div>               
                     <div class="draft" style="display: bold;">
-                        <textarea id="summary" placeholder="Enter summary here" 
+                        <textarea id="summary" placeholder="Enter summary here. This could include the challenges you are facing" 
                         style="width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input" id="draft"
                         >{{report_data.draft}}</textarea>
                     </div>
@@ -500,13 +507,43 @@ form .btn input[type="submit"]{
         });
       }
       
+      
+      function setUpdater(){
+        const inputField = document.getElementById('email_filter');
+
+        inputField.addEventListener('input', function() {
+            let newval = inputField.value;
+            console.log(newval)
+
+            let filteredItems = superarray.filter(item => 
+                item.toLowerCase().includes(newval.toLowerCase())
+            );
+
+            subarray = [...filteredItems]
+            console.log(subarray)
+            
+            document.querySelectorAll(".email_entry").forEach(element => {
+                const text = element.textContent.toLowerCase();
+                
+                let matches = subarray.includes(text)
+                // Hide element if no match found
+                element.style.display = matches ? "block" : "none";
+            });
+            dropdownComponent()
+        });
+
+      }
+      setUpdater()
+
+      superarray = JSON.parse($("meta[name='users']").attr("content"));
+      subarray = [...superarray];
       function dropdownComponent() {
         let partner = $("meta[name='partner']").attr("content");
-
+        
           return {
               open: false,
               selected: partner != "nil" ? partner: 'Select supervisee or supervisor',
-              items: JSON.parse($("meta[name='users']").attr("content")),
+              items: subarray,
               selectItem(item) {
                   this.selected = item;
                   this.open = false;
@@ -528,16 +565,16 @@ form .btn input[type="submit"]{
 
         let user = $("#selected_user").text();
         if (user == 'Select supervisee or supervisor'){
-          popAlert("Please Select supervisee or supervisor");
+          popAlert("Please Select supervisee or supervisor so they are informed");
           return
         }
         $("#mname").text(user)
 
         let summary = $("#summary").val();
-        if (summary == ''){
-          popAlert("Please enter your meeting summary");
-          return
-        }
+        // if (summary == ''){
+        //   popAlert("Please enter your meeting summary");
+        //   return
+        // }
         
         $("#msummary").text(summary)
 
@@ -550,15 +587,15 @@ form .btn input[type="submit"]{
           }
           top_entry[$(this).attr('id')] = text;
         })
-        if (!correct){
-          popAlert("Ensure all details have been filled");
-        }
+        // if (!correct){
+        //   popAlert("Ensure all details have been filled");
+        // }
         let time = $("#timePicker").val();
         let title = $("#thesisTitle").val();
         
-        if (!title){
-          popAlert("Kindly include the title of this meeting");
-        }
+        // if (!title){
+        //   popAlert("Kindly include the title of this meeting");
+        // }
 
         // return
         

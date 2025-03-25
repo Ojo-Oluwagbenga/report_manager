@@ -5,9 +5,11 @@ class User(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)  
     password = models.CharField(max_length=100) 
+    department = models.CharField(max_length=100) 
     join_time = models.IntegerField(default=0)
     
     user_code = models.CharField(max_length=50)   
+    gender = models.CharField(max_length=50) #supervisor or supervisee
     user_type = models.CharField(max_length=50) #supervisor or supervisee
     draft = models.JSONField(null=True)
     schedule = models.JSONField(null=True)

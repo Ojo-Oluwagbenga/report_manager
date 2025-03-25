@@ -60,7 +60,7 @@ def report(response, report_code):
     user_set = User.objects.filter(user_code=user_code)
     
     #EXTRACT ALL THE USER THAT CAN BE APPENDABLE
-    users = User.objects.all()
+    users = User.objects.filter(user_type='supervisee')
     data = list(users.values('email'))  
     dlist = []
     for usr in data:
@@ -110,7 +110,7 @@ def join_report(response, user_code, inviter_code, report_code):
     u_data.schedule[report_code] = {
         "partner":u_data2.email, 
         "partner_type":u_data2.user_type,
-        "draft":"Start draft...",
+        "draft":"",
         "status":"unsaved", 
         "new_time":u_data2.schedule[report_code]['new_time']
     }

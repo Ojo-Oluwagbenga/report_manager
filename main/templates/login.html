@@ -81,30 +81,33 @@
                 <input id="name" type="text" placeholder="Name">
               </div>
               <div class="field">
+                <input id="department" type="text" placeholder="Department e.g Mechanical Engineering">
+              </div>
+              <div class="field">
                 <input  id="email" type="text" placeholder="Email Address">
               </div>
               <div>
-                <div class="radiogroup" id="level">
+                <div class="radiogroup" id="gender">
+                    <div>Gender</div>
                     <div class="rb-hold">
-                        <div class="radiobutton" value="supervisor">
+                        <div class="radiobutton" value="male">
                             <div class="svghold c-vert">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                             </div>
-                            <div class="text c-vert">Supervisor</div>
+                            <div class="text c-vert">Male</div>
                         </div>
-                        <div class="radiobutton"  value="supervisee">
+                        <div class="radiobutton"  value="female">
                             <div class="svghold c-vert">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                             </div>
-                            <div class="text c-vert">Supervisee</div>
+                            <div class="text c-vert">Female</div>
                         </div>
                     </div>
                     <script>
                         selected_level = 0;
-                        $(".radiobutton").click(function(){
-                            $(".radiobutton").removeClass("selected");
+                        $("#gender .radiobutton").click(function(){
+                            $("#gender .radiobutton").removeClass("selected");
                             $(this).addClass("selected");
-                            $("#userlevel input").val($(this).find(".text").text())
                             selected_level = $(this).addClass("selected").attr("value");
                         })
                     </script>
@@ -125,7 +128,7 @@
                         .rb-hold{
                             display: flex;
                             flex-wrap: wrap;
-                            justify-content: space-around
+                            /* justify-content: space-around */
                         }
                         .radiobutton{
                             display: flex;
@@ -155,6 +158,33 @@
     
     
                     </style>
+                </div>
+              </div>
+              <div>
+                <div class="radiogroup" id="level">
+                  <div>User Type</div>
+                    <div class="rb-hold">
+                        <div class="radiobutton" value="supervisor">
+                            <div class="svghold c-vert">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                            </div>
+                            <div class="text c-vert">Supervisor</div>
+                        </div>
+                        <div class="radiobutton"  value="supervisee">
+                            <div class="svghold c-vert">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                            </div>
+                            <div class="text c-vert">Supervisee</div>
+                        </div>
+                    </div>
+                    <script>
+                        selected_gender = 0;
+                        $("#level .radiobutton").click(function(){
+                            $("#level .radiobutton").removeClass("selected");
+                            $(this).addClass("selected");
+                            selected_gender = $(this).addClass("selected").attr("value");
+                        })
+                    </script>
                 </div>
               </div>
               <div class="field">
@@ -384,6 +414,7 @@ form .btn input[type="submit"]{
 
       $("#enter_signup").click(()=>{
         let name = $("#name").val();
+        let department= $("#department").val();
         let email = $("#email").val();
         let password = $("#password").val();
         let password2 = $("#password2").val();
@@ -395,7 +426,16 @@ form .btn input[type="submit"]{
             popAlert("Enter a valid name");
             return
         }
+        if (department.length == 0){
+            popAlert("Please enter your department");
+            return
+        }
         console.log(selected_level)
+        
+        if (selected_gender === 0){
+            popAlert("Please select the gender");
+            return
+        }
         if (selected_level === 0){
             popAlert("Please select if supervisor or supervisee");
             return
@@ -413,7 +453,9 @@ form .btn input[type="submit"]{
             name:name,
             email:email,
             password:password,
-            user_type:utype
+            user_type:utype,
+            gender:selected_gender,
+            department:department,
         }
         console.log("ddd", submit_item)
         axios({

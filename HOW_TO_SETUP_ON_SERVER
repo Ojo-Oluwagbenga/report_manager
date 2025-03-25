@@ -29,7 +29,8 @@ CREATE THE FOLDER FOR PROJECT project_name
 mkdir projects/project_name
 cd projects/project_name
 git init
-git pull -f origin main
+git remote add origin https://github.com/Ojo-Oluwagbenga/Oneklass_v2.git
+git pull origin the_branch --allow-unrelated-histories or git pull -f origin main
 sudo nano project_name/proj/settings.py and include
 import os
 __all settings data
