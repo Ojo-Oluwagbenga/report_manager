@@ -104,11 +104,11 @@
                         </div>
                     </div>
                     <script>
-                        selected_level = 0;
+                        selected_gender = 0;
                         $("#gender .radiobutton").click(function(){
                             $("#gender .radiobutton").removeClass("selected");
                             $(this).addClass("selected");
-                            selected_level = $(this).addClass("selected").attr("value");
+                            selected_gender = $(this).addClass("selected").attr("value");
                         })
                     </script>
                     <style>
@@ -161,7 +161,7 @@
                 </div>
               </div>
               <div>
-                <div class="radiogroup" id="level">
+                <div class="radiogroup" id="user_type">
                   <div>User Type</div>
                     <div class="rb-hold">
                         <div class="radiobutton" value="supervisor">
@@ -178,11 +178,11 @@
                         </div>
                     </div>
                     <script>
-                        selected_gender = 0;
-                        $("#level .radiobutton").click(function(){
-                            $("#level .radiobutton").removeClass("selected");
+                        selected_usertype = 0;
+                        $("#user_type .radiobutton").click(function(){
+                            $("#user_type .radiobutton").removeClass("selected");
                             $(this).addClass("selected");
-                            selected_gender = $(this).addClass("selected").attr("value");
+                            selected_usertype = $(this).addClass("selected").attr("value");
                         })
                     </script>
                 </div>
@@ -418,7 +418,7 @@ form .btn input[type="submit"]{
         let email = $("#email").val();
         let password = $("#password").val();
         let password2 = $("#password2").val();
-        let utype = selected_level;
+        let utype = selected_usertype;
         
 
         console.log(name.length, name)
@@ -436,8 +436,8 @@ form .btn input[type="submit"]{
             popAlert("Please select the gender");
             return
         }
-        if (selected_level === 0){
-            popAlert("Please select if supervisor or supervisee");
+        if (selected_usertype === 0){
+            popAlert("Please select supervisor or supervisee");
             return
         }
         if (password.length < 4){
