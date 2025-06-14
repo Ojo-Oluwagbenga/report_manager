@@ -79,7 +79,7 @@ def report(response, report_code):
         partner_text = u_data.schedule[report_code]['draft'][partner]['text']
         partner_status = u_data.schedule[report_code]['draft'][partner]['status']
     
-    my_text = "Not yet entered"
+    my_text = ""
     my_status = '0'
     if (u_data.schedule[report_code]['draft'].get(u_data.email)):
         my_text = u_data.schedule[report_code]['draft'][u_data.email]['text']
