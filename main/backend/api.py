@@ -470,17 +470,7 @@ class UserAPI(View):
             data['join_time'] = 10
             current_time = int (time.time()*1000) #TIME IN MILLISEC
             data['schedule'] = {}
-            days_30 = 2592000000
-            for i in range(6):
-                data['schedule'][str(current_time )] = {
-                        "partner":"nil", 
-                        "partner_type":"nil",
-                        "draft":"",
-                        "status":"unsaved", 
-                        "new_time":current_time
-                    }
-                current_time += days_30
-            
+
             user_sl = ModelSL(data={**data}, model=User, extraverify={})
 
             if (not user_sl.is_valid()):
@@ -502,6 +492,21 @@ class UserAPI(View):
             ins_id = user_sl.save().__dict__['id']
             user_code = numberEncode(ins_id, 10)
             user_sl.validated_data['user_code'] = user_code
+            
+            current_time = int (time.time()*1000) #TIME IN MILLISEC
+            user_sl.validated_data['schedule'] = {}
+            days_30 = 2592000000
+            for i in range(6):
+                user_sl.validated_data['schedule'][user_code + str(current_time )] = {
+                        "partner":"nil", 
+                        "partner_type":"nil",
+                        "draft":{}, #THIS WILL CONTAIN OBJECT OF EACH PERSONS RESPONSE
+                        "type":"nil",
+                        "status":"unsaved", 
+                        "new_time":current_time
+                    }
+                current_time += days_30
+
             user_sl.save()
 
             
@@ -534,6 +539,7 @@ class UserAPI(View):
                 'response':{},
                 'error':{}
             }
+
             unique = data.get('uniqueid').strip()
             password = data.get('password')
 
@@ -541,14 +547,14 @@ class UserAPI(View):
             user = User.objects.filter(Q(email=unique))
             if (not user):
                 #CHECK IF IT IS THAT USER HAS NOT VERIFIED
-                user = UserTemp.objects.filter(Q(email=unique) )
+                # user = UserTemp.objects.filter(Q(email=unique) )
                 if (not user):
                     callresponse["Message"] = "Login credential not valid. User not found."
                     return HttpResponse(json.dumps(callresponse))
-                callresponse['Message'] = "User found"
-                callresponse['passed'] = True
-                callresponse['type'] = 'temp'
-                return HttpResponse(json.dumps(callresponse))
+                # callresponse['Message'] = "User found"
+                # callresponse['passed'] = True
+                # callresponse['type'] = 'temp'
+                # return HttpResponse(json.dumps(callresponse))
             u_data = user[0]
             if (not check_password(password, u_data.password)):
                 callresponse["Message"] = "Login credential not valid. User not found."
@@ -566,7 +572,7 @@ class UserAPI(View):
             }
             callresponse['response'] = {**new_data}
             callresponse['time_data'] = time.time()
-                        
+            
             if (data.get('startSession') is not None):
                 if (data.get('startSession')):
                     GeneralAPI.init_user_session(response, {**new_data})
@@ -592,49 +598,105 @@ class UserAPI(View):
             user_set = User.objects.filter(user_code=user_code)
             u_data = user_set[0]
 
+            partner_approve_stat = data['partner_approve_stat']
+            partner_draft = u_data.schedule[data["report_code"]]['draft'].get(data['partner'])
+            my_draft = u_data.schedule[data["report_code"]]['draft'].get(u_data.email)
+
+            changed = my_draft['text'] != data['draft']                
+            
+            if (not partner_draft):
+                partner_draft = {
+                    "text":'',
+                    "status":partner_approve_stat
+                }
+            else:
+                partner_draft['status'] = partner_approve_stat
+
+
             u_data.schedule[data["report_code"]]  = {
                 **data['top_entry'],
-                'draft':data['draft'],
+                'draft':{
+                    u_data.email: {
+                        "text":data['draft'],
+                        "status":0
+                    },
+                    data['partner']:partner_draft
+                },
                 'new_time':data['new_time'], # THIS IS THE DATE
                 'partner':data['partner'],
                 'time':data['time'],
                 'title':data['title'],
             }
+
+            
+            user_set_partner = User.objects.filter(email=data['partner'])
+            if (user_set_partner):
+                u_data_partner = user_set_partner[0]            
+                send_mail = False
+                
+                if (not u_data_partner.schedule.get(data["report_code"])):
+                    send_mail = True
+                    #CREATES A DUPLICATE FOR THE OTHER'S SIDE
+                    u_data_partner.schedule[data["report_code"]]  = {
+                        'new_time':data['new_time'], # THIS IS THE DATE
+                        'partner':u_data.email,
+                        'time':data['time'],
+                        'title':data['title'],
+                        "partner_type":u_data.user_type,
+                        "draft":{
+                            u_data.email: {
+                                "text":data['draft'],
+                                "status":0
+                            },
+                            data['partner']:partner_draft
+                        },
+                        "type":"INVITED",
+                        "status":"unsaved", 
+                    }
+                else:
+                    u_data_partner.schedule[data["report_code"]]['title'] = data['title']
+                    u_data_partner.schedule[data["report_code"]]['time'] = data['time']
+                    u_data_partner.schedule[data["report_code"]]['new_time'] = data['new_time']
+                    u_data_partner.schedule[data["report_code"]]['type'] = "INVITED"
+                    u_data_partner.schedule[data["report_code"]]['draft'][u_data.email]['text'] = data['draft']
+                    u_data_partner.schedule[data["report_code"]]['draft'][data['partner']]['status'] = partner_approve_stat
+                    if (changed):
+                        u_data_partner.schedule[data["report_code"]]['draft'][u_data.email]['status'] = "0"
+                
+                u_data_partner.save()
+
+                if send_mail:
+                    #SEND THE USER A CONFIRMATION MAIL
+                    context = {
+                        "confirm_link": "https://educateoau.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
+                        "inviter_name": u_data.name,
+                        "invited_name": u_data_partner.name,
+                        "datename":data['datename']
+                    }
+                    html_message = render_to_string("mail_templates/join_report.html", context=context)
+                    plain_message = strip_tags(html_message)
+
+                    message = EmailMultiAlternatives(
+                        subject = "Supervisor-supervisee Review",
+                        body = plain_message,
+                        from_email = None,
+                        to= [u_data_partner.email]
+                    )
+
+                    message.attach_alternative(html_message, "text/html")
+
+                    #INCLUDE THIS IN PRODUCTION
+                    # message.send()
+
             if (data.get("status") == 'saved'):
                 u_data.schedule[data["report_code"]]['status'] = 'saved'
 
             u_data.save()
-            user_set2 = User.objects.filter(email=data['partner'])
-            u_data2 = user_set2[0]
-
-            if not u_data2.schedule.get(data["report_code"]):
-            # if 1==2:
-
-                #SEND THE USER A CONFIRMATION MAIL
-                context = {
-                    "confirm_link": "https://educateoau.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
-                    "inviter_name": u_data.name,
-                    "invited_name": u_data2.name,
-                    "datename":data['datename']
-                }
-                html_message = render_to_string("mail_templates/join_report.html", context=context)
-                plain_message = strip_tags(html_message)
-
-                message = EmailMultiAlternatives(
-                    subject = "Supervisor-supervisee Review",
-                    body = plain_message,
-                    from_email = None,
-                    to= [u_data2.email]
-                )
-
-                message.attach_alternative(html_message, "text/html")
-
-                #INCLUDE THIS IN PRODUCTION
-                # message.send()
+            
             callresponse = {
                 'passed': True,
-                "email":u_data2.email,
-                'link':"https://educateoauife.oauife.edu.ng/join_report/"+u_data2.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
+                # "email":u_data_partner.email,
+                # 'link':"https://educateoauife.oauife.edu.ng/join_report/"+u_data_partner.user_code+ "/"  + user_code + '/' + str(data["report_code"]),
                 'response':{},
                 'error':{}
             }

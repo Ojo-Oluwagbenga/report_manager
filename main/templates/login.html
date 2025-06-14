@@ -500,10 +500,11 @@ form .btn input[type="submit"]{
                 startSession:true
             }
         }).then(response => {
+          console.log(response);
             if (response.data.passed){
                 popAlert("Login successful, redirecting");
                 setTimeout(() => {
-                    window.location.replace("./dashboard")
+                    window.location.replace(window.location.origin + "/dashboard")
                 }, 1000);
             }else{
                 popAlert(response.data.Message);

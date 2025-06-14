@@ -11,6 +11,8 @@
     <meta name="report_code" content="{{report_code}}">
     <meta name="new_time" content="{{report_data.new_time}}">
     <meta name="partner" content="{{report_data.partner}}">
+    <meta name="my_status" content="{{my_status}}">
+    <meta name="partner_status" content="{{partner_status}}">
     <meta name="users" content="{{users}}">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js" defer></script>
 </head>
@@ -162,11 +164,35 @@
 
                 
                 <div class="field my_schedules" style="height: max-content;">     
-                    <div style="font-weight: bold; padding: 10px 0;">My Overall reflections</div>               
-                    <div class="draft" style="display: bold;">
-                        <textarea id="summary" placeholder="Enter summary here. This could include the challenges you are facing" 
-                        style="width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input" id="draft"
-                        >{{report_data.draft}}</textarea>
+                    <div style="display: flex;
+                        justify-content: space-between;
+                        padding: 10px;
+                        font-weight: bold;">
+                      <div style="padding: 2px 0;">Reflections</div>
+                      <div style="background-color: #006fdf;
+                        padding: 3px 10px;
+                        color: white;
+                        border-radius: 5px;
+                        font-weight: normal;
+                        font-size: 14px;" id="reflection_toggle">Other's Reflections</div>
+                    </div>
+                    <div class="draft" style="display: bold; position: relative;" >
+                        <textarea id="summary" placeholder="Enter summary here. This will be shared with the partner here for approval" 
+                        style="width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input"
+                        >{{my_text}}</textarea>
+
+                        <textarea readonly id="partner_summary" placeholder="Enter summary here. This could include the challenges you are facing" 
+                        style="display: none; width: 95%;outline: none; padding: 10px; font-size: 15px; height: 300px; margin: 0px auto; border: none; border-radius: 10px; background-color: whitesmoke;" name="input"
+                        >{{partner_text}}</textarea>
+
+                        <div class="status-display" style="position: absolute; bottom: 10px; padding: 0 10px; border-radius: 3px;
+                        right: 30px; font-size: 13px; background-color: yellow;" id="status">
+                          Status: Waiting Approval
+                        </div>
+                        <div class="approve-display" style="display: none; position: absolute; bottom: 10px; padding: 5px 10px; border-radius: 3px; color: white;
+                        right: 30px; font-size: 14px; background-color: #006fdf;" id="approval">
+                          Click to Approve
+                        </div>
                     </div>
                 </div>
                 <div class="field btn" id="save_draft" style="height: max-content;">
@@ -465,6 +491,44 @@ form .btn input[type="submit"]{
         window.location.href = "./logout";
       })
 
+      let viewState = 'mine';
+      $("#reflection_toggle").click(function(){
+        if (viewState == 'mine'){
+          viewState = 'partner';
+          $("#partner_summary").css({"display":"block"})
+          $("#summary").css({"display":"none"});
+          $(".approve-display").css({"display":"block"});
+          $(".status-display").css({"display":"none"});
+          $("#reflection_toggle").text("View Mine");
+
+        }else{
+          viewState = 'mine';
+          $("#partner_summary").css({"display":"none"})
+          $("#summary").css({"display":"block"});
+          $(".approve-display").css({"display":"none"});
+          $(".status-display").css({"display":"block"});
+          $("#reflection_toggle").text("Other's Reflections");
+        }
+
+      })
+      
+
+      let approve_stat = $("meta[name='my_status']").attr("content");
+      if (approve_stat == '1'){
+        $(".status-display").css({"background-color":"green"});
+        $(".status-display").text('Status: Approved');
+      }
+
+      var partner_approve_stat = $("meta[name='partner_status']").attr("content");
+      if (partner_approve_stat == '1'){
+        $(".approve-display").css({"background-color":"grey"});
+      }
+      $(".approve-display").click(function(){
+        partner_approve_stat = '1';
+        $(".approve-display").css({"background-color":"grey"});
+        alert("Please click save draft to effect the change");
+      })
+
       function getMDate(datestamp) {
           let dateObj = new Date(Number(datestamp))
           let day = dateObj.toLocaleString('en-US', { weekday: 'long' }); // "Wednesday"
@@ -542,6 +606,8 @@ form .btn input[type="submit"]{
 
       superarray = JSON.parse($("meta[name='users']").attr("content"));
       subarray = [...superarray];
+      console.log("superarray");
+      console.log(superarray);
       function dropdownComponent() {
         let partner = $("meta[name='partner']").attr("content");
         
@@ -621,6 +687,7 @@ form .btn input[type="submit"]{
                 time:time,
                 title:title,
                 top_entry:top_entry,
+                partner_approve_stat:partner_approve_stat
             }
         }).then(response => {
             if (response.data.passed){

@@ -18,8 +18,10 @@ def login(response):
 
 
 def dashboard(response):
+    print ("Got to dashboard")
     try:
         if not response.session.get("user_data"):
+            print ("User data not found")
             response.session.flush()
             return redirect("/login")
                 
@@ -39,7 +41,7 @@ def dashboard(response):
         qset = {
             "user_data":response.session['user_data'],
             "name":response.session['user_data']['name'],
-            "schedule":json.dumps(u_data.schedule),
+            "schedule":json.dumps(u_data.schedule),           
         }
 
         return render(response, "dashboard.html", qset)
@@ -60,7 +62,7 @@ def report(response, report_code):
     user_set = User.objects.filter(user_code=user_code)
     
     #EXTRACT ALL THE USER THAT CAN BE APPENDABLE
-    users = User.objects.filter(user_type='supervisee')
+    users = User.objects.all()
     data = list(users.values('email'))  
     dlist = []
     for usr in data:
@@ -69,11 +71,23 @@ def report(response, report_code):
     dlist = sorted(dlist)  # Returns a new sorted list
             
     u_data = user_set[0]
-    
+
+    partner = u_data.schedule[report_code]['partner']
+    partner_text = "Not yet entered"
+    partner_status = '1'
+    if (partner != 'nil'):
+        partner_text = u_data.schedule[report_code]['draft'][partner]['text']
+        partner_status = u_data.schedule[report_code]['draft'][partner]['status']
+
     qset = {
         'report_data':u_data.schedule[report_code],
         'report_code':report_code,
-        'users':json.dumps(dlist)
+        'users':json.dumps(dlist),
+        'me':u_data.email,
+        'my_text':u_data.schedule[report_code]['draft'][u_data.email]['text'],
+        'my_status':u_data.schedule[report_code]['draft'][u_data.email]['status'],
+        'partner_text':partner_text,
+        'partner_status':partner_status,
     }
     print (qset)
 

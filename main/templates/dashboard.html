@@ -63,14 +63,26 @@
           </div>
           <div class="form-inner">
             <form action="#" class="login">
-                <h3 style="padding: 5px; margin-bottom: 20px;">My Schedules</h3>
-                <div class="field my_schedules" id="schedule_holder" style="height: 450px;">                    
-                    <div class="schedule">
-                        <div class="date">24th April; 2024</div>
-                        <div class="filldata">Enter report</div>
-                    </div>
+                <div>
+                  <h3 style="padding: 5px; margin-bottom: 20px;">Invited Schedules</h3>
+                  <div class="field my_schedules" id="schedule_holder_invited" style="height: max-content">                    
+                      <div class="schedule">
+                          <div class="date">24th April; 2024</div>
+                          <div class="filldata">Enter report</div>
+                      </div>
+                  </div>
+                </div>
+                <div>
+                  <h3 style="padding: 5px; margin-bottom: 20px;">My Schedules</h3>
+                  <div class="field my_schedules" id="schedule_holder" style="height: 450px;">                    
+                      <div class="schedule">
+                          <div class="date">24th April; 2024</div>
+                          <div class="filldata">Enter report</div>
+                      </div>
+                  </div>
                 </div>
             </form>
+
 
             <form action="#" class="signup" style="
                     display: flex;
@@ -365,18 +377,38 @@ form .btn input[type="submit"]{
           return `${day}, ${month} ${date}${sf}, ${year}`
       }
 
-      let schedule = JSON.parse( $("meta[name='schedule']").attr("content") );
-      console.log(schedule)
+      let schedules = JSON.parse( $("meta[name='schedule']").attr("content") );
+      console.log(schedules)
       let sch = "";
-      for (let key in schedule) {
-        let datastamp = schedule[key]['new_time']
-        sch += `<div class="schedule ${schedule[key]['status']}" id="${key}">
+      let sch_inv = "";
+      for (let key in schedules) {
+        let schedule = schedules[key]
+
+        let datastamp = schedule['new_time']
+        let title = 'Click to enter the details of the meeting';
+        let partner = 'With: ' + schedule['partner'];
+        if (schedule['title']){
+          title = schedule['title'];
+        }
+        if (schedule['partner'] == 'nil'){
+          partner  = '';
+        }
+        let text = `<div class="schedule ${schedule['status']}" id="${key}">
                     <div class="date">${getMDate(datastamp)}</div>
-                    <div class="extra" style="font-size: 15px; color: grey">Click to enter the details of the meeting</div>
+                    <div class="extra" style="font-size: 15px; color: grey">${title}</div>
+                    <div class="partner" style="font-size: 12px; margin:10px 0">${partner}</div>
                     <div class="filldata">Enter Summary</div>
+                    
                 </div>`
+        if (schedule['type'] == 'INVITED'){
+          sch_inv += text;
+        }else{
+          sch += text;
+        }
       }
       $('#schedule_holder').html(sch)
+      $('#schedule_holder_invited').html(sch_inv)
+      
       $(".schedule").click(function(){
         if ($(this).hasClass('saved')){
           alert('Your response has been collected for this meeting');
