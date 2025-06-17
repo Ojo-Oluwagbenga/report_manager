@@ -466,6 +466,7 @@ form .btn input[type="submit"]{
             },
             data: {
                 payload: submit_item,
+                startSession:true,
             }
         }).then(response => {
             if (response.data.passed){

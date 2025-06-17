@@ -605,11 +605,13 @@ form .btn input[type="submit"]{
       setUpdater()
 
       superarray = JSON.parse($("meta[name='users']").attr("content"));
-      subarray = [...superarray];
+      subarray = superarray;
       console.log("superarray");
       console.log(superarray);
       function dropdownComponent() {
         let partner = $("meta[name='partner']").attr("content");
+
+        console.log()
         
           return {
               open: false,
