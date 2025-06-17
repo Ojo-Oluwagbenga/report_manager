@@ -81,9 +81,13 @@ def report(response, report_code):
     
     my_text = ""
     my_status = '0'
-    if (u_data.schedule[report_code]['draft'].get(u_data.email)):
-        my_text = u_data.schedule[report_code]['draft'][u_data.email]['text']
-        my_status = u_data.schedule[report_code]['draft'][u_data.email]['status']
+
+    try:
+        if (u_data.schedule[report_code]['draft'].get(u_data.email)):
+            my_text = u_data.schedule[report_code]['draft'][u_data.email]['text']
+            my_status = u_data.schedule[report_code]['draft'][u_data.email]['status']
+    except Exception as e: 
+        pass
 
     qset = {
         'report_data':u_data.schedule[report_code],
